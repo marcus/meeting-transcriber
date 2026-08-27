@@ -92,7 +92,7 @@ flowchart TD
 - **VAD preprocessing** — Optional silence trimming via FluidAudio Silero v6 before transcription, with automatic timestamp remapping
 - **AI protocol generation** — Structured Markdown via [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), OpenAI-compatible APIs (Ollama, LM Studio, etc.), or disabled (save transcript only)
 - **Configurable protocol prompt** — Custom prompt file support (`~/Library/Application Support/MeetingTranscriber/protocol_prompt.md`) with `{LANGUAGE}`, `{MEETING_DATE}` (`YYYY-MM-DD`), and `{MEETING_TIME}` (`HH:mm`) variables; recordings include authoritative metadata, while imports and recovery jobs resolve time placeholders to `Unknown`
-- **Manual recording** — Record any app via app picker, not just detected meetings
+- **Manual recording** — Record any app via app picker, or the microphone alone via **Record Microphone**, not just detected meetings
 - **Multi-format input** — Supports WAV, MP3, M4A, MP4, FLAC, plus the phone and messenger voice formats AMR, 3GP/3G2 and OPUS/OGG; MKV and WebM additionally need ffmpeg
 - **Update checker** — Notifies when a new version is available
 - **Background processing** — PipelineQueue runs transcription and protocol generation independently from recording
@@ -303,11 +303,12 @@ The toggle persists in `UserDefaults` and takes effect on the next recording wit
 [![CI](https://github.com/pasrom/meeting-transcriber/actions/workflows/ci.yml/badge.svg)](https://github.com/pasrom/meeting-transcriber/actions/workflows/ci.yml)
 [![E2E](https://github.com/pasrom/meeting-transcriber/actions/workflows/e2e.yml/badge.svg)](https://github.com/pasrom/meeting-transcriber/actions/workflows/e2e.yml)
 [![E2E (App)](https://github.com/pasrom/meeting-transcriber/actions/workflows/e2e-app.yml/badge.svg)](https://github.com/pasrom/meeting-transcriber/actions/workflows/e2e-app.yml)
+[![E2E (Browser)](https://github.com/pasrom/meeting-transcriber/actions/workflows/e2e-browser.yml/badge.svg)](https://github.com/pasrom/meeting-transcriber/actions/workflows/e2e-browser.yml)
 [![Quality & Safety](https://github.com/pasrom/meeting-transcriber/actions/workflows/quality-and-safety.yml/badge.svg)](https://github.com/pasrom/meeting-transcriber/actions/workflows/quality-and-safety.yml)
 [![App Store Smoke](https://github.com/pasrom/meeting-transcriber/actions/workflows/appstore.yml/badge.svg)](https://github.com/pasrom/meeting-transcriber/actions/workflows/appstore.yml)
 [![codecov](https://codecov.io/gh/pasrom/meeting-transcriber/branch/main/graph/badge.svg)](https://codecov.io/gh/pasrom/meeting-transcriber)
 
-Pull requests run unit tests, lint, and analyzer in [`ci.yml`](.github/workflows/ci.yml). Two complementary E2E layers run on a self-hosted Apple Silicon Mac mini against the real production models (no mocks): [`e2e.yml`](.github/workflows/e2e.yml) feeds fixture audio through each ASR engine + the WatchLoop pipeline, and [`e2e-app.yml`](.github/workflows/e2e-app.yml) builds and signs the actual `.app`, drives a simulated meeting via [`tools/meeting-simulator`](tools/meeting-simulator), and asserts on the resulting transcript over the embedded debug RPC server.
+Pull requests run unit tests, lint, and analyzer in [`ci.yml`](.github/workflows/ci.yml). Three complementary E2E layers run on a self-hosted Apple Silicon Mac mini against the real production models (no mocks): [`e2e.yml`](.github/workflows/e2e.yml) feeds fixture audio through each ASR engine + the WatchLoop pipeline, [`e2e-app.yml`](.github/workflows/e2e-app.yml) builds and signs the actual `.app`, drives a simulated meeting via [`tools/meeting-simulator`](tools/meeting-simulator), and asserts on the resulting transcript over the embedded debug RPC server, and [`e2e-browser.yml`](.github/workflows/e2e-browser.yml) drives a real Chromium browser through the power-assertion detector, answers the recording-consent prompt over RPC, and asserts on the captured audio (non-gating canary).
 
 ---
 
